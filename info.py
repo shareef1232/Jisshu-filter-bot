@@ -1,4 +1,4 @@
-import re
+yuimport re
 from os import environ,getenv
 from Script import script
 
@@ -18,7 +18,7 @@ API_HASH = environ.get('API_HASH', '70c04843f3a522ecc001b911df96272b')
 BOT_TOKEN = environ.get('BOT_TOKEN', '')
 #---------------------------------------------------------------
 #---------------------------------------------------------------
-ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '6627938668').split()]
+ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '6627938668 993294576').split()]
 USERNAME = environ.get('USERNAME', "https://t.me/Darkanetwork2") # ADMIN USERNAME
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1002302145191'))
 MOVIE_GROUP_LINK = environ.get('MOVIE_GROUP_LINK', 'https://t.me/Thecinemacircle5')
