@@ -13,7 +13,6 @@ from database.users_chats_db import db
 from database.ia_filterdb import Media, get_search_results, get_bad_files, get_file_details
 import random
 lock = asyncio.Lock()
-from .Extra.checkFsub import is_user_fsub
 import traceback
 from fuzzywuzzy import process
 BUTTONS = {}
@@ -55,9 +54,7 @@ async def group_search(client, message):
     user_id = message.from_user.id if message.from_user else None
     chat_id = message.chat.id
     settings = await get_settings(chat_id)
-    ifJoinedFsub = await is_user_fsub(client,message)
-    if ifJoinedFsub == False:
-        return
+ 
     if message.chat.id == SUPPORT_GROUP :
                 if message.text.startswith("/"):
                     return
@@ -318,7 +315,7 @@ async def season_search(client: Client, query: CallbackQuery):
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), file.file_name.split()))}</a></b>"""
     else:
         btn = [[
-                InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.file_name)}", callback_data=f'files#{reqnxt}#{file.file_id}'),]
+                InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.file_name)}", callback_data=f'cfiles#{reqnxt}#{file.file_id}'),]
                    for file in files
               ]
    
@@ -424,7 +421,7 @@ async def year_search(client: Client, query: CallbackQuery):
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), file.file_name.split()))}</a></b>"""
     else:
         btn = [[
-                InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.file_name)}", callback_data=f'files#{reqnxt}#{file.file_id}'),]
+                InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.file_name)}", callback_data=f'cfiles#{reqnxt}#{file.file_id}'),]
                    for file in files
               ]
         
@@ -530,7 +527,7 @@ async def quality_search(client: Client, query: CallbackQuery):
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), file.file_name.split()))}</a></b>"""
     else:
         btn = [[
-                InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.file_name)}", callback_data=f'files#{reqnxt}#{file.file_id}'),]
+                InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.file_name)}", callback_data=f'cfiles#{reqnxt}#{file.file_id}'),]
                    for file in files
               ]
         
@@ -641,7 +638,7 @@ async def lang_search(client: Client, query: CallbackQuery):
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), file.file_name.split()))}</a></b>"""
     else:
         btn = [[
-                InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.file_name)}", callback_data=f'files#{reqnxt}#{file.file_id}'),]
+                InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.file_name)}", callback_data=f'cfiles#{reqnxt}#{file.file_id}'),]
                    for file in files
               ]
         
@@ -699,6 +696,16 @@ async def advantage_spoll_choker(bot, query):
             await query.message.reply_to_message.delete()
         except:
             pass
+
+@Client.on_callback_query(filters.regex(r"^cfiles"))
+async def pmfile_cb(client, query):
+    _, userid, fileid = query.data.split("#")
+    if query.from_user.id != userid:
+        await query.answer("Request Your Own!!", show_alert=True)
+        return
+
+    await query.answer(f"https://telegram.dog/{temp.U_NAME}?start=file_{query.message.chat.id}_{fileid}")
+    return
 
 @Client.on_callback_query()
 async def cb_handler(client: Client, query: CallbackQuery):
